@@ -3,6 +3,8 @@ import type {
   WorkspaceLayout,
 } from "../../documents/types/documentTypes";
 import type { ColorTheme } from "../../theme/hooks/useTheme";
+import { ExportNameDialog } from "../../export/components/ExportNameDialog";
+import { useState } from "react";
 import { LayoutToggle } from "./LayoutToggle";
 import { PageZoomControl } from "./PageZoomControl";
 
@@ -23,7 +25,7 @@ interface WorkspaceToolbarProps {
   readonly onUndo: () => void;
   readonly onRedo: () => void;
   readonly onClear: () => void;
-  readonly onExport: () => void;
+  readonly onExport: (title: string) => void;
   readonly onSupport: () => void;
   readonly onContact: () => void;
 }
@@ -44,6 +46,38 @@ function SecondaryActions(props: WorkspaceToolbarProps): React.JSX.Element {
       </button>
       <button onClick={props.onSupport}>Support</button>
       <button onClick={props.onContact}>Contact</button>
+    </>
+  );
+}
+
+function ExportAction(props: WorkspaceToolbarProps): React.JSX.Element {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const hasDocuments = props.documentCount > 0;
+  const confirmExport = (title: string) => {
+    setDialogOpen(false);
+    props.onExport(title);
+  };
+
+  return (
+    <>
+      <button
+        className="primary-action"
+        aria-label={props.busy ? "Working" : "Verify and download"}
+        onClick={() => setDialogOpen(true)}
+        disabled={!hasDocuments || props.busy}
+      >
+        <span className="action-full">
+          {props.busy ? "Working…" : "Verify & download"}
+        </span>
+        <span className="action-short" aria-hidden="true">
+          {props.busy ? "…" : "Verify"}
+        </span>
+      </button>
+      <ExportNameDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onConfirm={confirmExport}
+      />
     </>
   );
 }
@@ -89,19 +123,7 @@ export function WorkspaceToolbar(props: WorkspaceToolbarProps): React.JSX.Elemen
           <span className="action-full">Add PDFs</span>
           <span className="action-short" aria-hidden="true">+</span>
         </button>
-        <button
-          className="primary-action"
-          aria-label={props.busy ? "Working" : "Verify and download"}
-          onClick={props.onExport}
-          disabled={!hasDocuments || props.busy}
-        >
-          <span className="action-full">
-            {props.busy ? "Working…" : "Verify & download"}
-          </span>
-          <span className="action-short" aria-hidden="true">
-            {props.busy ? "…" : "Verify"}
-          </span>
-        </button>
+        <ExportAction {...props} />
       </nav>
     </header>
   );

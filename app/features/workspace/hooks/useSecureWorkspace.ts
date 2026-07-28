@@ -12,6 +12,7 @@ import {
   createVerifiedPdf,
   downloadVerifiedPdf,
 } from "../../export/services/pdfExportService";
+import { resolveExportName } from "../../export/services/exportFilenameService";
 import {
   recordProductEvent,
   captureCampaignSource,
@@ -177,14 +178,17 @@ export function useSecureWorkspace() {
     [commit],
   );
 
-  const exportPdf = useCallback(async () => {
+  const exportPdf = useCallback(async (requestedTitle: string) => {
     if (busy || documentsRef.current.length === 0) return;
+    const exportName = resolveExportName(requestedTitle);
     setBusy(true);
     try {
-      const exported = await createVerifiedPdf(documentsRef.current, (message) =>
-        setNotice({ tone: "info", message }),
+      const exported = await createVerifiedPdf(
+        documentsRef.current,
+        (message) => setNotice({ tone: "info", message }),
+        exportName.documentTitle,
       );
-      downloadVerifiedPdf(exported);
+      downloadVerifiedPdf(exported, exportName.filenameStem);
       recordProductEvent("merge_completed");
       setNotice({
         tone: "success",

@@ -107,6 +107,19 @@ requireCheck(
 await page.getByLabel("Zoom pages out").click();
 await page.getByLabel("Zoom pages out").click();
 
+await page.getByRole("button", { name: "Verify and download" }).click();
+await page.getByLabel("PDF title").fill("Client / Bundle.pdf");
+const downloadPromise = page.waitForEvent("download");
+await page
+  .locator(".export-name-dialog")
+  .getByRole("button", { name: "Verify & download" })
+  .click();
+const verifiedDownload = await downloadPromise;
+requireCheck(
+  /^Client Bundle-[a-f0-9]{16}\.pdf$/.test(verifiedDownload.suggestedFilename()),
+  "Custom PDF title was not used for the verified download",
+);
+
 const center = await page.locator(".toolbar-center").boundingBox();
 requireCheck(
   Math.abs(center.x + center.width / 2 - 720) < 4,

@@ -94,7 +94,7 @@ export function SecurePdfApp(): React.JSX.Element {
         onUndo={workspace.undo}
         onRedo={workspace.redo}
         onClear={workspace.clear}
-        onExport={() => void workspace.exportPdf()}
+        onExport={(title) => void workspace.exportPdf(title)}
         onSupport={() => setSupportOpen(true)}
         onContact={() => setContactOpen(true)}
       />
