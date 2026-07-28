@@ -16,6 +16,17 @@ const eslintConfig = defineConfig([
       "no-undef": "off",
     },
   },
+  {
+    files: [
+      "app/features/workspace/components/DocumentCard.tsx",
+      "app/features/workspace/components/DocumentEndDropZone.tsx",
+      "app/features/workspace/components/PageCard.tsx",
+    ],
+    rules: {
+      // dnd-kit exposes callback refs and reactive getters as hook return values.
+      "react-hooks/refs": "off",
+    },
+  },
   globalIgnores([
     ".next/**",
     ".vinext/**",

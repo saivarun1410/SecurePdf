@@ -50,10 +50,15 @@ describe("verified PDF export", () => {
     const documents: PdfDocumentItem[] = [
       { id: "document", name: "Verified", pages: [page(source, 1), page(source, 0)] },
     ];
-    const exported = await createVerifiedPdf(documents, () => undefined);
+    const exported = await createVerifiedPdf(
+      documents,
+      () => undefined,
+      "Client bundle",
+    );
     expect(exported.pageCount).toBe(2);
     expect(exported.fingerprint).toMatch(/^[a-f0-9]{16}$/);
     const reopened = await PDFDocument.load(exported.bytes);
+    expect(reopened.getTitle()).toBe("Client bundle");
     expect(reopened.getPage(0).getSize()).toEqual({ width: 400, height: 250 });
     expect(reopened.getPage(1).getSize()).toEqual({ width: 200, height: 300 });
   });

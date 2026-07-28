@@ -20,6 +20,7 @@ export interface PdfDocumentItem {
 }
 
 export type WorkspaceLayout = "rows" | "columns";
+export type PageZoom = 75 | 100 | 125 | 150 | 200;
 
 export interface ImportLimits {
   readonly maximumFileBytes: number;

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   PdfSecurityError,
+  validateDocumentFormSafety,
   validatePassivePdf,
   validateWorkspaceCapacity,
 } from "../app/features/documents/services/pdfSecurityPolicy";
@@ -19,9 +20,19 @@ describe("PDF security policy", () => {
     );
   });
 
-  it("rejects interactive forms whose behavior may change during merging", () => {
-    expect(() => validatePassivePdf(bytes("%PDF-1.7 /AcroForm 8 0 R"))).toThrow(
-      "Interactive PDF forms",
+  it("does not reject a harmless AcroForm marker without parsed fields", () => {
+    expect(() =>
+      validatePassivePdf(bytes("%PDF-1.7 /AcroForm 8 0 R")),
+    ).not.toThrow();
+  });
+
+  it("rejects parsed interactive form fields with an actionable reason", async () => {
+    const { PDFDocument } = await import("pdf-lib");
+    const document = await PDFDocument.create();
+    const page = document.addPage();
+    document.getForm().createTextField("name").addToPage(page);
+    expect(() => validateDocumentFormSafety(document)).toThrow(
+      "Print or export a static copy",
     );
   });
 

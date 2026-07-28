@@ -9,10 +9,12 @@ vertical columns.
 - Import multiple PDFs by file picker or drop
 - Reorder complete documents and individual pages
 - Move pages between documents
+- Zoom PDF pages without scaling the application header
 - Rename, remove, clear, undo, and redo
 - Switch between rows and columns
 - Generate a new PDF and download it only after verification
 - Offer optional India and international support links
+- Send privacy-safe contact messages through optional Web3Forms configuration
 
 ## Integrity and security model
 
@@ -53,6 +55,10 @@ npm test
 npm audit
 ```
 
+For mouse, touch-sized layout, zoom, theme, and cross-document drag checks,
+leave `npm run dev` running and execute `npm run test:browser` in another
+terminal. This uses an installed Google Chrome and generated non-user fixtures.
+
 ## Optional support payments
 
 Copy `.env.example` to `.env.local` and provide hosted checkout or payment-link
@@ -61,6 +67,9 @@ URLs:
 ```text
 NEXT_PUBLIC_SUPPORT_INR_URL=
 NEXT_PUBLIC_SUPPORT_USD_URL=
+NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY=
+NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=
 ```
 
 The support buttons stay disabled when a URL is absent. Payment processing must
@@ -68,3 +77,23 @@ remain external to the PDF workspace so payment providers never receive PDF
 data. Review provider onboarding, international-card support, settlement,
 taxation, refund, and foreign-exchange requirements for the operating entity
 before enabling the links.
+
+The Web3Forms contact payload contains only the name, email address, and
+message explicitly entered in the contact dialog. It never reads or sends PDF
+bytes, filenames, page counts, or workspace activity. Add the production domain
+to the Web3Forms allowed-domain list before enabling the key in hosting.
+
+## Search and Cloudflare deployment
+
+SecurePDF renders indexable product content and includes canonical URLs,
+robots directives, a sitemap, social metadata, and WebApplication structured
+data. `NEXT_PUBLIC_SITE_URL` can pin these URLs to a future custom domain;
+otherwise they follow the request host. Add a Google Search Console HTML-tag
+token as `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` when one is available.
+
+The production build targets Cloudflare Workers. After authenticating Wrangler,
+deploy the generated Worker and static assets with:
+
+```bash
+npm run deploy:cloudflare
+```

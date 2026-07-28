@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "./styles/base.css";
+@import "./styles/toolbar.css";
+@import "./styles/home.css";
 @import "./styles/workspace.css";
 @import "./styles/dialog.css";
 @import "./styles/notifications.css";
 @import "./styles/legal.css";
+@import "./styles/contact.css";
+@import "./styles/export.css";
+@import "./styles/seo.css";

@@ -1,6 +1,11 @@
 import { LegalPage } from "../features/legal/components/LegalPage";
 
-export const metadata = { title: "Terms" };
+export const metadata = {
+  title: "Terms of Use",
+  description:
+    "SecurePDF terms covering supported PDF files, local browser processing, document ownership, integrity checks, and safe-use boundaries.",
+  alternates: { canonical: "/terms" },
+};
 
 export default function TermsPage(): React.JSX.Element {
   return (
@@ -14,7 +19,9 @@ export default function TermsPage(): React.JSX.Element {
             <p>
               Signed files, interactive forms, active content, encrypted or
               malformed files, and files beyond the published workspace limits
-              may be rejected. These limits protect document integrity.
+              may be rejected. Live forms are rejected because page copying can
+              detach field values or behavior. These limits protect document
+              integrity.
             </p>
           ),
         },

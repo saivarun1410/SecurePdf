@@ -88,6 +88,7 @@ async function fingerprint(bytes: Uint8Array): Promise<string> {
 export async function createVerifiedPdf(
   documents: PdfDocumentItem[],
   report: ExportProgress,
+  documentTitle = "SecurePDF verified merge",
 ): Promise<VerifiedExport> {
   const expectedPages = documents.flatMap((document) => document.pages);
   if (expectedPages.length === 0) throw new Error("Add at least one PDF first.");
@@ -96,7 +97,7 @@ export async function createVerifiedPdf(
   const output = await PDFDocument.create();
   const sources = await loadSources(documents);
   for (const page of expectedPages) await appendPage(output, sources, page);
-  output.setTitle("SecurePDF verified merge");
+  output.setTitle(documentTitle);
   output.setProducer("SecurePDF");
   const bytes = await output.save({
     addDefaultPage: false,
@@ -112,12 +113,15 @@ export async function createVerifiedPdf(
   };
 }
 
-export function downloadVerifiedPdf(exported: VerifiedExport): void {
+export function downloadVerifiedPdf(
+  exported: VerifiedExport,
+  filenameStem: string,
+): void {
   const blob = new Blob([exported.bytes.slice()], { type: "application/pdf" });
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = `securepdf-verified-${exported.fingerprint}.pdf`;
+  anchor.download = `${filenameStem}-${exported.fingerprint}.pdf`;
   anchor.click();
   window.setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }

@@ -1,0 +1,245 @@
+.toolbar {
+  position: sticky;
+  z-index: 50;
+  top: 0;
+  display: grid;
+  min-height: 52px;
+  align-items: center;
+  grid-template-columns: minmax(120px, 1fr) auto minmax(430px, 1fr);
+  gap: 16px;
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--color-hairline);
+  background: color-mix(in srgb, var(--color-canvas) 96%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.brand {
+  font-size: 14px;
+  letter-spacing: -0.4px;
+}
+
+.toolbar-center,
+.toolbar-actions,
+.desktop-actions,
+.layout-toggle,
+.page-zoom {
+  display: flex;
+  align-items: center;
+}
+
+.toolbar-center {
+  justify-content: center;
+  gap: 10px;
+}
+
+.toolbar-actions {
+  min-width: 0;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.desktop-actions {
+  gap: 6px;
+}
+
+.document-count {
+  color: var(--color-body);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.document-count i {
+  padding: 0 5px;
+  color: var(--color-mute);
+  font-style: normal;
+}
+
+.toolbar button,
+.layout-toggle button,
+.page-zoom button,
+.mobile-actions summary {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-sm);
+  background: var(--color-canvas);
+  color: var(--color-body);
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.toolbar button:hover,
+.layout-toggle button:hover,
+.page-zoom button:hover,
+.mobile-actions summary:hover {
+  border-color: var(--color-hairline-strong);
+  background: var(--color-canvas-soft);
+  color: var(--color-ink);
+}
+
+.toolbar .primary-action {
+  border-color: #171717;
+  background: #171717;
+  color: #ffffff;
+  font-weight: 650;
+}
+
+html.dark .toolbar .primary-action {
+  border-color: #ffffff;
+  background: #ffffff;
+  color: #111111;
+}
+
+.toolbar .primary-action:hover {
+  filter: brightness(0.9);
+}
+
+.toolbar .danger {
+  color: var(--color-danger);
+}
+
+.layout-toggle,
+.page-zoom {
+  overflow: hidden;
+  border-radius: var(--radius-sm);
+}
+
+.layout-toggle button,
+.page-zoom button {
+  border-radius: 0;
+}
+
+.layout-toggle button + button,
+.page-zoom > * + * {
+  border-left: 0;
+}
+
+.layout-toggle button.active {
+  border-color: var(--color-ink);
+  background: var(--color-ink);
+  color: var(--color-canvas);
+}
+
+.page-zoom span {
+  display: grid;
+  width: 48px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid var(--color-hairline);
+  color: var(--color-body);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.mobile-actions {
+  display: none;
+  position: relative;
+}
+
+.action-short {
+  display: none;
+}
+
+.mobile-actions summary {
+  display: grid;
+  width: 34px;
+  place-items: center;
+  padding: 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.mobile-actions summary::-webkit-details-marker {
+  display: none;
+}
+
+.mobile-actions > div {
+  position: absolute;
+  z-index: 80;
+  top: 36px;
+  right: 0;
+  display: grid;
+  width: 150px;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  background: var(--color-canvas);
+  box-shadow: var(--shadow-level-5);
+}
+
+.mobile-actions > div button {
+  width: 100%;
+  text-align: left;
+}
+
+@media (max-width: 1500px) {
+  .toolbar {
+    grid-template-columns: minmax(100px, 1fr) auto minmax(250px, 1fr);
+  }
+
+  .desktop-actions {
+    display: none;
+  }
+
+  .mobile-actions {
+    display: block;
+  }
+}
+
+@media (max-width: 720px) {
+  .toolbar {
+    grid-template-columns: minmax(76px, 1fr) auto;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .toolbar-center {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 1px;
+  }
+
+  .toolbar-actions {
+    width: max-content;
+  }
+
+  .toolbar .add-action,
+  .toolbar .primary-action {
+    padding: 0 8px;
+  }
+
+  .toolbar .primary-action {
+    min-width: 72px;
+  }
+}
+
+@media (max-width: 390px) {
+  .toolbar {
+    padding-inline: 8px;
+  }
+
+  .brand {
+    font-size: 13px;
+  }
+
+  .toolbar .add-action {
+    width: 36px;
+    padding: 0 7px;
+  }
+
+  .action-full {
+    display: none;
+  }
+
+  .action-short {
+    display: inline;
+  }
+
+  .toolbar .add-action .action-short {
+    font-size: 17px;
+  }
+}

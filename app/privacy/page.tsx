@@ -1,6 +1,11 @@
 import { LegalPage } from "../features/legal/components/LegalPage";
 
-export const metadata = { title: "Privacy" };
+export const metadata = {
+  title: "Privacy Policy",
+  description:
+    "How SecurePDF processes PDF files locally in browser memory and protects document contents, filenames, and workspace activity.",
+  alternates: { canonical: "/privacy" },
+};
 
 export default function PrivacyPage(): React.JSX.Element {
   return (
@@ -34,6 +39,16 @@ export default function PrivacyPage(): React.JSX.Element {
               If you choose to support the project, an external payment
               provider processes the transaction under its own privacy policy.
               SecurePDF never places payment code inside the PDF workspace.
+            </p>
+          ),
+        },
+        {
+          heading: "Contact messages",
+          content: (
+            <p>
+              The contact form sends only the name, email address, and message
+              you deliberately enter to Web3Forms. PDF contents, filenames,
+              page counts, and workspace activity are never included.
             </p>
           ),
         },

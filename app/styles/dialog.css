@@ -5,7 +5,9 @@
   display: grid;
   place-items: center;
   padding: 20px;
-  background: rgb(0 0 0 / 36%);
+  background: rgb(0 0 0 / 28%);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 
 .support-dialog {

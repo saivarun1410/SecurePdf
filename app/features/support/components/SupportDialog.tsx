@@ -24,8 +24,7 @@ export function SupportDialog({
         <div className="dialog-icon" aria-hidden="true">☕</div>
         <h2 id="support-title">Keep SecurePDF free.</h2>
         <p>
-          If this tool saved you time, a small contribution helps us test more
-          difficult PDFs and keep processing private.
+          If this tool saved you time, you can make an optional contribution.
         </p>
         <div className="support-options">
           {getSupportOptions().map((option) =>
@@ -52,7 +51,6 @@ export function SupportDialog({
         <nav className="dialog-legal" aria-label="Support policies">
           <a href="/privacy">Privacy</a>
           <a href="/terms">Terms</a>
-          <a href="/refunds">Refunds</a>
         </nav>
       </section>
     </div>

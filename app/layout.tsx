@@ -1,35 +1,34 @@
 import "./globals.css";
+import { StructuredData } from "./features/seo/components/StructuredData";
+import {
+  buildSiteMetadata,
+  getSiteOrigin,
+} from "./features/seo/services/siteMetadata";
 
-export const metadata = {
-  title: {
-    default: "SecurePDF",
-    template: "%s · SecurePDF",
-  },
-  description:
-    "A private, browser-only workspace for arranging and securely merging PDFs.",
-  icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-  },
-  openGraph: {
-    title: "SecurePDF — arrange PDFs safely",
-    description: "Files never upload. Merge only after every page is verified.",
-    images: [{ url: "/og.png", width: 1200, height: 630 }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    images: ["/og.png"],
-  },
+export const viewport = {
+  colorScheme: "light dark",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f4f4f1" },
+    { media: "(prefers-color-scheme: dark)", color: "#151515" },
+  ],
 };
 
-export default function RootLayout({
+export async function generateMetadata() {
+  const siteOrigin = await getSiteOrigin();
+  return buildSiteMetadata(siteOrigin);
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>): Promise<React.JSX.Element> {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <StructuredData />
+        {children}
+      </body>
     </html>
   );
 }

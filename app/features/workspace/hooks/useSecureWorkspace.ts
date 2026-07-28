@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { importPdfFile } from "../../documents/services/pdfImportService";
 import { PdfSecurityError } from "../../documents/services/pdfSecurityPolicy";
 import type {
+  PageZoom,
   PdfDocumentItem,
   WorkspaceLayout,
 } from "../../documents/types/documentTypes";
@@ -11,18 +12,25 @@ import {
   createVerifiedPdf,
   downloadVerifiedPdf,
 } from "../../export/services/pdfExportService";
+import { resolveExportName } from "../../export/services/exportFilenameService";
 import {
   recordProductEvent,
   captureCampaignSource,
 } from "../../analytics/services/localAnalytics";
 import {
   movePage,
+  movePageToDocumentEnd,
   removeDocument,
   removePage,
   renameDocument,
   reorderDocuments,
 } from "../services/workspaceOperations";
-import type { DragItem } from "../types/dragTypes";
+import {
+  adjacentZoom,
+  parseStoredLayout,
+  parseStoredZoom,
+} from "../services/workspacePreferences";
+import type { DraggableItem, DropTarget } from "../types/dragTypes";
 
 export interface WorkspaceNotice {
   readonly tone: "info" | "success" | "error";
@@ -30,6 +38,7 @@ export interface WorkspaceNotice {
 }
 
 const LAYOUT_KEY = "securepdf:layout";
+const ZOOM_KEY = "securepdf:page-zoom";
 const HISTORY_LIMIT = 30;
 
 function workspaceByteCount(documents: PdfDocumentItem[]): number {
@@ -43,6 +52,7 @@ function workspaceByteCount(documents: PdfDocumentItem[]): number {
 export function useSecureWorkspace() {
   const [documents, setDocuments] = useState<PdfDocumentItem[]>([]);
   const [layout, setLayout] = useState<WorkspaceLayout>("rows");
+  const [zoom, setZoom] = useState<PageZoom>(100);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<WorkspaceNotice | null>(null);
   const [past, setPast] = useState<PdfDocumentItem[][]>([]);
@@ -56,9 +66,11 @@ export function useSecureWorkspace() {
 
   useEffect(() => {
     captureCampaignSource();
-    const stored = localStorage.getItem(LAYOUT_KEY);
+    const storedLayout = localStorage.getItem(LAYOUT_KEY);
+    const storedZoom = localStorage.getItem(ZOOM_KEY);
     const timer = window.setTimeout(() => {
-      if (stored === "rows" || stored === "columns") setLayout(stored);
+      setLayout(parseStoredLayout(storedLayout));
+      setZoom(parseStoredZoom(storedZoom));
     }, 0);
     const urls = thumbnailUrls.current;
     return () => {
@@ -131,9 +143,14 @@ export function useSecureWorkspace() {
     recordProductEvent("layout_changed");
   }, []);
 
+  const changeZoom = useCallback((next: PageZoom) => {
+    setZoom(next);
+    localStorage.setItem(ZOOM_KEY, String(next));
+  }, []);
+
   const moveDraggedItem = useCallback(
-    (active: DragItem, over: DragItem) => {
-      if (active.kind === "document" && over.kind === "document") {
+    (active: DraggableItem, over: DropTarget) => {
+      if (active.kind === "document") {
         commit(
           reorderDocuments(
             documentsRef.current,
@@ -141,23 +158,37 @@ export function useSecureWorkspace() {
             over.documentId,
           ),
         );
+        return;
       }
-      if (active.kind === "page" && over.kind === "page") {
-        commit(movePage(documentsRef.current, active.pageId, over.pageId));
+      const next =
+        over.kind === "page"
+          ? movePage(documentsRef.current, active.pageId, over.pageId)
+          : over.kind === "document-end" || over.kind === "document"
+            ? movePageToDocumentEnd(
+                documentsRef.current,
+                active.pageId,
+                over.documentId,
+              )
+            : documentsRef.current;
+      if (next !== documentsRef.current) {
+        commit(next);
         recordProductEvent("page_moved");
       }
     },
     [commit],
   );
 
-  const exportPdf = useCallback(async () => {
+  const exportPdf = useCallback(async (requestedTitle: string) => {
     if (busy || documentsRef.current.length === 0) return;
+    const exportName = resolveExportName(requestedTitle);
     setBusy(true);
     try {
-      const exported = await createVerifiedPdf(documentsRef.current, (message) =>
-        setNotice({ tone: "info", message }),
+      const exported = await createVerifiedPdf(
+        documentsRef.current,
+        (message) => setNotice({ tone: "info", message }),
+        exportName.documentTitle,
       );
-      downloadVerifiedPdf(exported);
+      downloadVerifiedPdf(exported, exportName.filenameStem);
       recordProductEvent("merge_completed");
       setNotice({
         tone: "success",
@@ -192,9 +223,23 @@ export function useSecureWorkspace() {
     setDocuments(next);
   }, [future, past]);
 
+  const clearWorkspace = useCallback(() => {
+    thumbnailUrls.current.forEach((url) => URL.revokeObjectURL(url));
+    thumbnailUrls.current.clear();
+    setPast([]);
+    setFuture([]);
+    documentsRef.current = [];
+    setDocuments([]);
+    setNotice({
+      tone: "success",
+      message: "Workspace memory cleared. No PDF content was retained.",
+    });
+  }, []);
+
   return {
     documents,
     layout,
+    zoom,
     busy,
     notice,
     totals,
@@ -202,11 +247,13 @@ export function useSecureWorkspace() {
     canRedo: future.length > 0,
     addFiles,
     changeLayout,
+    zoomIn: () => changeZoom(adjacentZoom(zoom, 1)),
+    zoomOut: () => changeZoom(adjacentZoom(zoom, -1)),
     moveDraggedItem,
     exportPdf,
     undo,
     redo,
-    clear: () => commit([]),
+    clear: clearWorkspace,
     rename: (id: string, name: string) =>
       commit(renameDocument(documentsRef.current, id, name)),
     removeDocument: (id: string) =>

@@ -1,9 +1,16 @@
-import { LayoutToggle } from "./LayoutToggle";
-import type { WorkspaceLayout } from "../../documents/types/documentTypes";
+import type {
+  PageZoom,
+  WorkspaceLayout,
+} from "../../documents/types/documentTypes";
 import type { ColorTheme } from "../../theme/hooks/useTheme";
+import { ExportNameDialog } from "../../export/components/ExportNameDialog";
+import { useState } from "react";
+import { LayoutToggle } from "./LayoutToggle";
+import { PageZoomControl } from "./PageZoomControl";
 
 interface WorkspaceToolbarProps {
   readonly layout: WorkspaceLayout;
+  readonly zoom: PageZoom;
   readonly theme: ColorTheme;
   readonly documentCount: number;
   readonly pageCount: number;
@@ -12,12 +19,67 @@ interface WorkspaceToolbarProps {
   readonly canRedo: boolean;
   readonly onAdd: () => void;
   readonly onLayout: (layout: WorkspaceLayout) => void;
+  readonly onZoomIn: () => void;
+  readonly onZoomOut: () => void;
   readonly onTheme: () => void;
   readonly onUndo: () => void;
   readonly onRedo: () => void;
   readonly onClear: () => void;
-  readonly onExport: () => void;
+  readonly onExport: (title: string) => void;
   readonly onSupport: () => void;
+  readonly onContact: () => void;
+}
+
+function SecondaryActions(props: WorkspaceToolbarProps): React.JSX.Element {
+  const hasDocuments = props.documentCount > 0;
+  return (
+    <>
+      {hasDocuments && (
+        <>
+          <button onClick={props.onUndo} disabled={!props.canUndo}>Undo</button>
+          <button onClick={props.onRedo} disabled={!props.canRedo}>Redo</button>
+          <button className="danger" onClick={props.onClear}>Clear</button>
+        </>
+      )}
+      <button onClick={props.onTheme}>
+        {props.theme === "light" ? "Dark mode" : "Light mode"}
+      </button>
+      <button onClick={props.onSupport}>Support</button>
+      <button onClick={props.onContact}>Contact</button>
+    </>
+  );
+}
+
+function ExportAction(props: WorkspaceToolbarProps): React.JSX.Element {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const hasDocuments = props.documentCount > 0;
+  const confirmExport = (title: string) => {
+    setDialogOpen(false);
+    props.onExport(title);
+  };
+
+  return (
+    <>
+      <button
+        className="primary-action"
+        aria-label={props.busy ? "Working" : "Verify and download"}
+        onClick={() => setDialogOpen(true)}
+        disabled={!hasDocuments || props.busy}
+      >
+        <span className="action-full">
+          {props.busy ? "Working…" : "Verify & download"}
+        </span>
+        <span className="action-short" aria-hidden="true">
+          {props.busy ? "…" : "Verify"}
+        </span>
+      </button>
+      <ExportNameDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        onConfirm={confirmExport}
+      />
+    </>
+  );
 }
 
 export function WorkspaceToolbar(props: WorkspaceToolbarProps): React.JSX.Element {
@@ -25,7 +87,6 @@ export function WorkspaceToolbar(props: WorkspaceToolbarProps): React.JSX.Elemen
   return (
     <header className="toolbar">
       <div className="brand">
-        <span className="brand-mark" aria-hidden="true">S</span>
         <strong>SecurePDF</strong>
       </div>
       <div className="toolbar-center">
@@ -37,34 +98,32 @@ export function WorkspaceToolbar(props: WorkspaceToolbarProps): React.JSX.Elemen
               {props.pageCount} {props.pageCount === 1 ? "page" : "pages"}
             </span>
             <LayoutToggle value={props.layout} onChange={props.onLayout} />
+            <PageZoomControl
+              value={props.zoom}
+              onZoomIn={props.onZoomIn}
+              onZoomOut={props.onZoomOut}
+            />
           </>
         )}
       </div>
       <nav className="toolbar-actions" aria-label="Workspace actions">
-        {hasDocuments && (
-          <>
-            <button onClick={props.onUndo} disabled={!props.canUndo}>Undo</button>
-            <button onClick={props.onRedo} disabled={!props.canRedo}>Redo</button>
-            <button className="danger" onClick={props.onClear}>Clear</button>
-          </>
-        )}
+        <div className="desktop-actions">
+          <SecondaryActions {...props} />
+        </div>
+        <details className="mobile-actions">
+          <summary aria-label="More workspace actions">•••</summary>
+          <div><SecondaryActions {...props} /></div>
+        </details>
         <button
-          className="square-action"
-          onClick={props.onTheme}
-          aria-label={`Use ${props.theme === "light" ? "dark" : "light"} theme`}
-          title="Toggle theme"
+          className="add-action"
+          aria-label="Add PDFs"
+          onClick={props.onAdd}
+          disabled={props.busy}
         >
-          {props.theme === "light" ? "◐" : "○"}
+          <span className="action-full">Add PDFs</span>
+          <span className="action-short" aria-hidden="true">+</span>
         </button>
-        <button onClick={props.onSupport}>Support</button>
-        <button onClick={props.onAdd} disabled={props.busy}>Add PDFs</button>
-        <button
-          className="primary-action"
-          onClick={props.onExport}
-          disabled={!hasDocuments || props.busy}
-        >
-          {props.busy ? "Working…" : "Verify & download"}
-        </button>
+        <ExportAction {...props} />
       </nav>
     </header>
   );

@@ -1,5 +1,6 @@
 import {
   PdfSecurityError,
+  validateDocumentFormSafety,
   validateFileBoundary,
   validatePassivePdf,
   validateWorkspaceCapacity,
@@ -11,7 +12,7 @@ import type {
   PdfSource,
 } from "../types/documentTypes";
 
-const THUMBNAIL_WIDTH = 180;
+const PREVIEW_PIXEL_WIDTH = 900;
 
 function createIdentifier(prefix: string): string {
   return `${prefix}-${crypto.randomUUID()}`;
@@ -27,7 +28,7 @@ async function renderThumbnail(
 ): Promise<{ url: string; width: number; height: number }> {
   const page = await pdf.getPage(pageNumber);
   const baseViewport = page.getViewport({ scale: 1 });
-  const scale = THUMBNAIL_WIDTH / baseViewport.width;
+  const scale = PREVIEW_PIXEL_WIDTH / baseViewport.width;
   const viewport = page.getViewport({ scale });
   const canvas = document.createElement("canvas");
   canvas.width = Math.ceil(viewport.width);
@@ -38,7 +39,7 @@ async function renderThumbnail(
   }
   await page.render({ canvas, canvasContext: context, viewport }).promise;
   const blob = await new Promise<Blob | null>((resolve) =>
-    canvas.toBlob(resolve, "image/webp", 0.82),
+    canvas.toBlob(resolve, "image/png"),
   );
   if (!blob) {
     throw new PdfSecurityError("RENDER_FAILED", "A page preview could not be created.");
@@ -55,18 +56,56 @@ async function createPages(
   pdf: Awaited<ReturnType<typeof openPdfForInspection>>,
 ): Promise<PdfPage[]> {
   const pages: PdfPage[] = [];
-  for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
-    const thumbnail = await renderThumbnail(pdf, pageNumber);
-    pages.push({
-      id: createIdentifier("page"),
-      source,
-      sourcePageIndex: pageNumber - 1,
-      width: thumbnail.width,
-      height: thumbnail.height,
-      thumbnailUrl: thumbnail.url,
-    });
+  try {
+    for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+      const thumbnail = await renderThumbnail(pdf, pageNumber);
+      pages.push({
+        id: createIdentifier("page"),
+        source,
+        sourcePageIndex: pageNumber - 1,
+        width: thumbnail.width,
+        height: thumbnail.height,
+        thumbnailUrl: thumbnail.url,
+      });
+    }
+    return pages;
+  } catch (error) {
+    pages.forEach((page) => URL.revokeObjectURL(page.thumbnailUrl));
+    if (error instanceof PdfSecurityError) throw error;
+    throw new PdfSecurityError(
+      "PREVIEW_FAILED",
+      "A sharp preview could not be rendered safely. The PDF was left untouched.",
+    );
   }
-  return pages;
+}
+
+async function parsePdfDocument(bytes: Uint8Array) {
+  const { PDFDocument } = await import("pdf-lib");
+  try {
+    return await PDFDocument.load(bytes, {
+      ignoreEncryption: false,
+      throwOnInvalidObject: true,
+      updateMetadata: false,
+    });
+  } catch {
+    throw new PdfSecurityError(
+      "MALFORMED_PDF",
+      "This PDF is encrypted or malformed and could not be opened safely.",
+    );
+  }
+}
+
+async function inspectPdf(bytes: Uint8Array) {
+  try {
+    return await openPdfForInspection(bytes);
+  } catch (error) {
+    const developmentDetail =
+      import.meta.env.DEV && error instanceof Error ? ` (${error.message})` : "";
+    throw new PdfSecurityError(
+      "INSPECTION_FAILED",
+      `An independent PDF parser could not inspect this file safely.${developmentDetail}`,
+    );
+  }
 }
 
 export async function importPdfFile(
@@ -77,13 +116,9 @@ export async function importPdfFile(
   validateFileBoundary(file);
   const bytes = new Uint8Array(await file.arrayBuffer());
   validatePassivePdf(bytes);
-  const { PDFDocument } = await import("pdf-lib");
-  await PDFDocument.load(bytes, {
-    ignoreEncryption: false,
-    throwOnInvalidObject: true,
-    updateMetadata: false,
-  });
-  const inspectionPdf = await openPdfForInspection(bytes);
+  const parsedDocument = await parsePdfDocument(bytes);
+  validateDocumentFormSafety(parsedDocument);
+  const inspectionPdf = await inspectPdf(bytes);
   validateWorkspaceCapacity(
     currentBytes,
     currentPages,

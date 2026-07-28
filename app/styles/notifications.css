@@ -32,24 +32,9 @@
 }
 
 @media (max-width: 640px) {
-  .empty-workspace {
-    inset: 96px 0 0;
-  }
-
-  .quick-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .quick-grid div:nth-child(3) {
-    border-left: 0;
-    border-top: 1px solid var(--color-hairline);
-  }
-
-  .quick-grid div:nth-child(4) {
-    border-top: 1px solid var(--color-hairline);
-  }
-
-  .document-workspace {
-    padding: 10px;
+  .notice {
+    right: 10px;
+    bottom: 10px;
+    max-width: calc(100vw - 20px);
   }
 }
