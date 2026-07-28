@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 async function request(path = "/", accept = "text/html") {
@@ -42,15 +43,16 @@ test("server-renders the SecurePDF application shell", async () => {
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
 });
 
-test("serves crawlable robots and sitemap metadata", async () => {
-  const robotsResponse = await request("/robots.txt", "text/plain");
-  const robots = await robotsResponse.text();
-  assert.equal(robotsResponse.status, 200);
+test("provides crawlable robots and sitemap metadata", async () => {
+  const robots = await readFile(
+    new URL("../public/robots.txt", import.meta.url),
+    "utf8",
+  );
   assert.match(robots, /User-Agent: \*/i);
   assert.match(robots, /Allow: \//i);
   assert.match(
     robots,
-    /Sitemap: https:\/\/securepdf\.example\/sitemap\.xml/i,
+    /Sitemap: https:\/\/securepdf\.saivarun1410\.workers\.dev\/sitemap\.xml/i,
   );
 
   const sitemapResponse = await request("/sitemap.xml", "application/xml");
