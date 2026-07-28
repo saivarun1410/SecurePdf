@@ -1,9 +1,10 @@
 import { SecurePdfApp } from "./features/workspace/components/SecurePdfApp";
 
 export const metadata = {
-  title: "SecurePDF — arrange and merge PDFs privately",
+  title: "Free Private PDF Merger & Page Organizer",
   description:
-    "Arrange PDF pages in rows or columns and create a verified merged PDF. Your files never leave your browser.",
+    "Merge PDFs free without uploading files. Drag pages between documents, arrange them in rows or columns, verify the result, and download privately.",
+  alternates: { canonical: "/" },
 };
 
 export default function Home() {

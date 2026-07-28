@@ -14,6 +14,7 @@ import {
 } from "@dnd-kit/core";
 import { useRef, useState, type CSSProperties, type DragEvent } from "react";
 import { ContactDialog } from "../../contact/components/ContactDialog";
+import { SeoContent } from "../../seo/components/SeoContent";
 import { SupportDialog } from "../../support/components/SupportDialog";
 import { useTheme } from "../../theme/hooks/useTheme";
 import { useSecureWorkspace } from "../hooks/useSecureWorkspace";
@@ -99,7 +100,10 @@ export function SecurePdfApp(): React.JSX.Element {
       />
       <PrivacyStrip />
       {workspace.documents.length === 0 ? (
-        <EmptyWorkspace busy={workspace.busy} onChoose={chooseFiles} />
+        <>
+          <EmptyWorkspace busy={workspace.busy} onChoose={chooseFiles} />
+          <SeoContent />
+        </>
       ) : (
         <DndContext
           sensors={sensors}

@@ -51,7 +51,6 @@ export function SupportDialog({
         <nav className="dialog-legal" aria-label="Support policies">
           <a href="/privacy">Privacy</a>
           <a href="/terms">Terms</a>
-          <a href="/refunds">Refunds</a>
         </nav>
       </section>
     </div>

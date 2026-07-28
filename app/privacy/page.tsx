@@ -1,6 +1,11 @@
 import { LegalPage } from "../features/legal/components/LegalPage";
 
-export const metadata = { title: "Privacy" };
+export const metadata = {
+  title: "Privacy Policy",
+  description:
+    "How SecurePDF processes PDF files locally in browser memory and protects document contents, filenames, and workspace activity.",
+  alternates: { canonical: "/privacy" },
+};
 
 export default function PrivacyPage(): React.JSX.Element {
   return (

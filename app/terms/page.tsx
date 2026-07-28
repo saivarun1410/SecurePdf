@@ -1,6 +1,11 @@
 import { LegalPage } from "../features/legal/components/LegalPage";
 
-export const metadata = { title: "Terms" };
+export const metadata = {
+  title: "Terms of Use",
+  description:
+    "SecurePDF terms covering supported PDF files, local browser processing, document ownership, integrity checks, and safe-use boundaries.",
+  alternates: { canonical: "/terms" },
+};
 
 export default function TermsPage(): React.JSX.Element {
   return (

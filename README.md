@@ -68,6 +68,8 @@ URLs:
 NEXT_PUBLIC_SUPPORT_INR_URL=
 NEXT_PUBLIC_SUPPORT_USD_URL=
 NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY=
+NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=
 ```
 
 The support buttons stay disabled when a URL is absent. Payment processing must
@@ -80,3 +82,18 @@ The Web3Forms contact payload contains only the name, email address, and
 message explicitly entered in the contact dialog. It never reads or sends PDF
 bytes, filenames, page counts, or workspace activity. Add the production domain
 to the Web3Forms allowed-domain list before enabling the key in hosting.
+
+## Search and Cloudflare deployment
+
+SecurePDF renders indexable product content and includes canonical URLs,
+robots directives, a sitemap, social metadata, and WebApplication structured
+data. `NEXT_PUBLIC_SITE_URL` can pin these URLs to a future custom domain;
+otherwise they follow the request host. Add a Google Search Console HTML-tag
+token as `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` when one is available.
+
+The production build targets Cloudflare Workers. After authenticating Wrangler,
+deploy the generated Worker and static assets with:
+
+```bash
+npm run deploy:cloudflare
+```

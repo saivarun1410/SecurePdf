@@ -28,7 +28,6 @@ export function EmptyWorkspace({
       <nav className="legal-links" aria-label="Legal">
         <a href="/privacy">Privacy</a>
         <a href="/terms">Terms</a>
-        <a href="/refunds">Refunds</a>
       </nav>
     </section>
   );

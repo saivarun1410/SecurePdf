@@ -84,8 +84,9 @@
   display: grid;
   min-height: 82px;
   align-content: center;
-  grid-template-columns: 28px minmax(0, 1fr);
-  gap: 8px;
+  align-items: baseline;
+  grid-template-columns: max-content minmax(0, 1fr);
+  column-gap: 6px;
   padding: 16px;
   text-align: left;
 }
