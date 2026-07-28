@@ -7,10 +7,10 @@ async function request(path = "/", accept = "text/html") {
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
   return worker.fetch(
-    new Request(`https://securepdf.example${path}`, {
+    new Request(`https://realsecurepdf.example${path}`, {
       headers: {
         accept,
-        host: "securepdf.example",
+        host: "realsecurepdf.example",
         "x-forwarded-proto": "https",
       },
     }),
@@ -39,7 +39,7 @@ function faqAnswerWordCount(html) {
   );
 }
 
-test("server-renders the SecurePDF application shell", async () => {
+test("server-renders the RealSecurePdf application shell", async () => {
   const response = await request();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
@@ -52,16 +52,16 @@ test("server-renders the SecurePDF application shell", async () => {
   const html = await response.text();
   assert.match(
     html,
-    /<title>Free Private PDF Merger &amp; Page Organizer \| SecurePDF<\/title>/i,
+    /<title>Free Private PDF Merger &amp; Page Organizer \| RealSecurePdf<\/title>/i,
   );
   assert.match(
     html,
-    /<link rel="canonical" href="https:\/\/securepdf\.example\/"/i,
+    /<link rel="canonical" href="https:\/\/realsecurepdf\.example\/"/i,
   );
   assert.match(html, /<meta name="robots" content="index, follow"/i);
   assert.match(html, /"@type":"WebApplication"/i);
   assert.match(html, /"@type":"FAQPage"/i);
-  assert.match(html, /SecurePDF/);
+  assert.match(html, /RealSecurePdf/);
   assert.match(html, /Arrange PDFs safely/);
   assert.match(html, /Merge PDFs without uploading/);
   assert.ok((html.match(/<details>/g) ?? []).length > 10);
@@ -85,9 +85,9 @@ test("provides crawlable robots and sitemap metadata", async () => {
   const sitemapResponse = await request("/sitemap.xml", "application/xml");
   const sitemap = await sitemapResponse.text();
   assert.equal(sitemapResponse.status, 200);
-  assert.match(sitemap, /<loc>https:\/\/securepdf\.example\/<\/loc>/i);
-  assert.match(sitemap, /<loc>https:\/\/securepdf\.example\/privacy<\/loc>/i);
-  assert.match(sitemap, /<loc>https:\/\/securepdf\.example\/terms<\/loc>/i);
+  assert.match(sitemap, /<loc>https:\/\/realsecurepdf\.example\/<\/loc>/i);
+  assert.match(sitemap, /<loc>https:\/\/realsecurepdf\.example\/privacy<\/loc>/i);
+  assert.match(sitemap, /<loc>https:\/\/realsecurepdf\.example\/terms<\/loc>/i);
   assert.doesNotMatch(sitemap, /refunds/i);
 });
 
@@ -98,6 +98,6 @@ test("serves an installable web application manifest", async () => {
   );
   assert.equal(response.status, 200);
   const manifest = await response.json();
-  assert.equal(manifest.name, "SecurePDF — Private PDF Merger");
+  assert.equal(manifest.name, "RealSecurePdf — Private PDF Merger");
   assert.equal(manifest.start_url, "/");
 });

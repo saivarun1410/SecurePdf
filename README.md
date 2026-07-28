@@ -1,6 +1,6 @@
-# SecurePDF
+# RealSecurePdf
 
-SecurePDF is a browser-only workspace for viewing, rearranging, and merging PDF
+RealSecurePdf is a browser-only workspace for viewing, rearranging, and merging PDF
 pages. Documents are shown in horizontal rows by default and can be switched to
 vertical columns.
 
@@ -29,12 +29,12 @@ content, embedded files, and interactive forms. This protects against silently
 invalidating a signature or changing form behavior.
 
 Before download, the generated PDF is reopened by `pdf-lib` and independently
-by PDF.js. SecurePDF checks page count, every page's operator stream, and page
+by PDF.js. RealSecurePdf checks page count, every page's operator stream, and page
 dimensions. A failed check produces no download. Successful files include a
 short SHA-256 fingerprint in the filename.
 
 No general-purpose PDF tool can promise mathematical compatibility with every
-possible PDF. SecurePDF's guarantee is operational: keep originals untouched,
+possible PDF. RealSecurePdf's guarantee is operational: keep originals untouched,
 reject risky inputs, independently verify output, and fail without downloading.
 
 ## Local development
@@ -85,7 +85,7 @@ to the Web3Forms allowed-domain list before enabling the key in hosting.
 
 ## Search and Cloudflare deployment
 
-SecurePDF renders indexable product content and includes canonical URLs,
+RealSecurePdf renders indexable product content and includes canonical URLs,
 robots directives, a sitemap, social metadata, and WebApplication structured
 data. `NEXT_PUBLIC_SITE_URL` can pin these URLs to a future custom domain;
 otherwise they follow the request host. Add a Google Search Console HTML-tag

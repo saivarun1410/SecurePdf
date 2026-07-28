@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
-import { SECUREPDF_FAQ_ENTRIES } from "./faqContent";
+import { REAL_SECURE_PDF_FAQ_ENTRIES } from "./faqContent";
 
-export const SITE_NAME = "SecurePDF";
+export const SITE_NAME = "RealSecurePdf";
 export const SITE_DESCRIPTION =
   "Merge and reorder PDF pages free in your browser. Arrange pages in rows or columns, verify the result, and download without uploading your files.";
 
@@ -17,7 +17,7 @@ const APPLICATION_FEATURES = [
 
 const BASE_METADATA = {
   title: {
-    default: "SecurePDF — Free Private PDF Merger & Page Organizer",
+    default: "RealSecurePdf — Free Private PDF Merger & Page Organizer",
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -88,20 +88,20 @@ export function buildSiteMetadata(siteOrigin: string): object {
       locale: "en_US",
       siteName: SITE_NAME,
       url: "/",
-      title: "SecurePDF — Free Private PDF Merger",
+      title: "RealSecurePdf — Free Private PDF Merger",
       description: SITE_DESCRIPTION,
       images: [{
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "SecurePDF private browser PDF merger",
+        alt: "RealSecurePdf private browser PDF merger",
       }],
     },
     twitter: {
       card: "summary_large_image",
-      title: "SecurePDF — Free Private PDF Merger",
+      title: "RealSecurePdf — Free Private PDF Merger",
       description: SITE_DESCRIPTION,
-      images: [{ url: "/og.png", alt: "SecurePDF private PDF merger" }],
+      images: [{ url: "/og.png", alt: "RealSecurePdf private PDF merger" }],
     },
   };
 }
@@ -109,7 +109,7 @@ export function buildSiteMetadata(siteOrigin: string): object {
 function buildFaqSchema(): object {
   return {
     "@type": "FAQPage",
-    mainEntity: SECUREPDF_FAQ_ENTRIES.map((entry) => ({
+    mainEntity: REAL_SECURE_PDF_FAQ_ENTRIES.map((entry) => ({
       "@type": "Question",
       name: entry.question,
       acceptedAnswer: {
@@ -136,7 +136,7 @@ export function buildApplicationSchema(siteOrigin: string): object {
         "@type": "WebApplication",
         "@id": `${siteOrigin}/#application`,
         name: SITE_NAME,
-        alternateName: "Secure PDF",
+        alternateName: "Real Secure PDF",
         url: siteOrigin,
         description: SITE_DESCRIPTION,
         applicationCategory: "UtilitiesApplication",

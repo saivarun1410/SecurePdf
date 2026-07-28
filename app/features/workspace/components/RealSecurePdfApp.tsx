@@ -25,7 +25,7 @@ import { EmptyWorkspace } from "./EmptyWorkspace";
 import { PrivacyStrip } from "./PrivacyStrip";
 import { WorkspaceToolbar } from "./WorkspaceToolbar";
 
-export function SecurePdfApp(): React.JSX.Element {
+export function RealSecurePdfApp(): React.JSX.Element {
   const workspace = useSecureWorkspace();
   const appearance = useTheme();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -94,7 +94,7 @@ export function SecurePdfApp(): React.JSX.Element {
         onUndo={workspace.undo}
         onRedo={workspace.redo}
         onClear={workspace.clear}
-        onExport={(title) => void workspace.exportPdf(title)}
+        onExport={(request) => void workspace.exportPdf(request)}
         onSupport={() => setSupportOpen(true)}
         onContact={() => setContactOpen(true)}
       />

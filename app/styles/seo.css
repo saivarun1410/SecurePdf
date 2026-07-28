@@ -96,7 +96,7 @@
   margin: 24px 0 0;
   padding: 0;
   list-style: none;
-  counter-reset: securepdf-step;
+  counter-reset: realsecurepdf-step;
 }
 
 .seo-steps li {
@@ -106,7 +106,7 @@
   color: var(--color-body);
   font-size: 12px;
   line-height: 1.6;
-  counter-increment: securepdf-step;
+  counter-increment: realsecurepdf-step;
 }
 
 .seo-steps li::before {
@@ -115,7 +115,7 @@
   color: var(--color-mute);
   font-family: var(--font-mono);
   font-size: 10px;
-  content: "0" counter(securepdf-step);
+  content: "0" counter(realsecurepdf-step);
 }
 
 .seo-steps strong {

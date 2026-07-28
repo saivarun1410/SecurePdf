@@ -19,7 +19,7 @@ export function LegalPage({
   return (
     <main className="legal-page">
       <header>
-        <a href="/" className="legal-brand">SecurePDF</a>
+        <a href="/" className="legal-brand">RealSecurePdf</a>
         <a href="/" className="legal-back">Back to workspace</a>
       </header>
       <article>

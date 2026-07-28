@@ -36,7 +36,7 @@ export function ContactDialog({
         </p>
         {form.state === "success" ? (
           <div className="contact-success" role="status">
-            Message sent. Thank you for helping improve SecurePDF.
+            Message sent. Thank you for helping improve RealSecurePdf.
           </div>
         ) : (
           <form onSubmit={handleSubmit}>

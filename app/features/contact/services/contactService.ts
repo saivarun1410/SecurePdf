@@ -26,13 +26,13 @@ export async function submitContactMessage(
     },
     body: JSON.stringify({
       access_key: accessKey,
-      subject: `SecurePDF contact from ${fields.name.trim()}`,
-      from_name: "SecurePDF contact",
+      subject: `RealSecurePdf contact from ${fields.name.trim()}`,
+      from_name: "RealSecurePdf contact",
       name: fields.name.trim(),
       email: fields.email.trim(),
       replyto: fields.email.trim(),
       message: fields.message.trim(),
-      source: "securepdf-contact",
+      source: "realsecurepdf-contact",
       botcheck: "",
     }),
   });

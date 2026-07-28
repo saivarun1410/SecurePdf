@@ -4,6 +4,7 @@ import type {
 } from "../../documents/types/documentTypes";
 import type { ColorTheme } from "../../theme/hooks/useTheme";
 import { ExportNameDialog } from "../../export/components/ExportNameDialog";
+import type { ExportRequest } from "../../export/types/exportTypes";
 import { useState } from "react";
 import { LayoutToggle } from "./LayoutToggle";
 import { PageZoomControl } from "./PageZoomControl";
@@ -25,7 +26,7 @@ interface WorkspaceToolbarProps {
   readonly onUndo: () => void;
   readonly onRedo: () => void;
   readonly onClear: () => void;
-  readonly onExport: (title: string) => void;
+  readonly onExport: (request: ExportRequest) => void;
   readonly onSupport: () => void;
   readonly onContact: () => void;
 }
@@ -53,9 +54,9 @@ function SecondaryActions(props: WorkspaceToolbarProps): React.JSX.Element {
 function ExportAction(props: WorkspaceToolbarProps): React.JSX.Element {
   const [dialogOpen, setDialogOpen] = useState(false);
   const hasDocuments = props.documentCount > 0;
-  const confirmExport = (title: string) => {
+  const confirmExport = (request: ExportRequest) => {
     setDialogOpen(false);
-    props.onExport(title);
+    props.onExport(request);
   };
 
   return (
@@ -74,6 +75,7 @@ function ExportAction(props: WorkspaceToolbarProps): React.JSX.Element {
         </span>
       </button>
       <ExportNameDialog
+        itemLabel={props.layout === "rows" ? "row" : "column"}
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         onConfirm={confirmExport}
@@ -87,7 +89,8 @@ export function WorkspaceToolbar(props: WorkspaceToolbarProps): React.JSX.Elemen
   return (
     <header className="toolbar">
       <div className="brand">
-        <strong>SecurePDF</strong>
+        <strong>RealSecurePdf</strong>
+        <span className="brand-badge">Free</span>
       </div>
       <div className="toolbar-center">
         {hasDocuments && (

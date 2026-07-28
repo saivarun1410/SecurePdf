@@ -88,7 +88,7 @@ async function fingerprint(bytes: Uint8Array): Promise<string> {
 export async function createVerifiedPdf(
   documents: PdfDocumentItem[],
   report: ExportProgress,
-  documentTitle = "SecurePDF verified merge",
+  documentTitle = "RealSecurePdf verified merge",
 ): Promise<VerifiedExport> {
   const expectedPages = documents.flatMap((document) => document.pages);
   if (expectedPages.length === 0) throw new Error("Add at least one PDF first.");
@@ -98,7 +98,7 @@ export async function createVerifiedPdf(
   const sources = await loadSources(documents);
   for (const page of expectedPages) await appendPage(output, sources, page);
   output.setTitle(documentTitle);
-  output.setProducer("SecurePDF");
+  output.setProducer("RealSecurePdf");
   const bytes = await output.save({
     addDefaultPage: false,
     useObjectStreams: true,

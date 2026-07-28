@@ -3,10 +3,10 @@ export interface ExportName {
   readonly filenameStem: string;
 }
 
-export const DEFAULT_EXPORT_TITLE = "securepdf-merged";
+export const DEFAULT_EXPORT_TITLE = "realsecurepdf-merged";
 
 const MAX_TITLE_LENGTH = 80;
-const TRAILING_PDF_EXTENSION = /(?:\.pdf)+$/i;
+const TRAILING_EXPORT_EXTENSION = /(?:(?:\.pdf|\.zip))+$/i;
 const UNSAFE_FILENAME_CHARACTERS = /[<>:"/\\|?*]/g;
 const REPEATED_WHITESPACE = /\s+/g;
 const TRAILING_DOTS_OR_SPACES = /[.\s]+$/;
@@ -20,7 +20,7 @@ function replaceControlCharacters(value: string): string {
 export function resolveExportName(requestedTitle: string): ExportName {
   const withoutExtension = requestedTitle
     .trim()
-    .replace(TRAILING_PDF_EXTENSION, "");
+    .replace(TRAILING_EXPORT_EXTENSION, "");
   const filenameStem =
     replaceControlCharacters(withoutExtension)
       .replace(UNSAFE_FILENAME_CHARACTERS, " ")

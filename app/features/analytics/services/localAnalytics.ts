@@ -6,8 +6,8 @@ type ProductEvent =
   | "merge_failed"
   | "support_opened";
 
-const EVENT_KEY = "securepdf:event-counts";
-const SOURCE_KEY = "securepdf:campaign-source";
+const EVENT_KEY = "realsecurepdf:event-counts";
+const SOURCE_KEY = "realsecurepdf:campaign-source";
 
 function canUseStorage(): boolean {
   return typeof window !== "undefined" && typeof localStorage !== "undefined";

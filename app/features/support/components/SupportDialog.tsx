@@ -22,7 +22,7 @@ export function SupportDialog({
       >
         <button className="dialog-close" aria-label="Close" onClick={onClose}>×</button>
         <div className="dialog-icon" aria-hidden="true">☕</div>
-        <h2 id="support-title">Keep SecurePDF free.</h2>
+        <h2 id="support-title">Keep RealSecurePdf free.</h2>
         <p>
           If this tool saved you time, you can make an optional contribution.
         </p>
