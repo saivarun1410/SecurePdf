@@ -217,6 +217,15 @@ requireCheck(
   !(await page.locator(".support-dialog").innerText()).includes("difficult PDFs"),
   "Removed support copy remains",
 );
+requireCheck(
+  (await page.getByRole("link", { name: /Support from India/ }).getAttribute("href")) ===
+    "https://rzp.io/rzp/Mja4hAh",
+  "Domestic Razorpay page is not connected",
+);
+requireCheck(
+  await page.getByRole("button", { name: /Support internationally/ }).isDisabled(),
+  "International support should remain unavailable during review",
+);
 await page.getByLabel("Close").click();
 await page.screenshot({ path: `${projectRoot}/tmp/desktop-qa.png`, fullPage: true });
 
