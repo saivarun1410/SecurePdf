@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import { SECUREPDF_FAQ_ENTRIES } from "./faqContent";
 
 export const SITE_NAME = "SecurePDF";
 export const SITE_DESCRIPTION =
@@ -105,6 +106,20 @@ export function buildSiteMetadata(siteOrigin: string): object {
   };
 }
 
+function buildFaqSchema(): object {
+  return {
+    "@type": "FAQPage",
+    mainEntity: SECUREPDF_FAQ_ENTRIES.map((entry) => ({
+      "@type": "Question",
+      name: entry.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: entry.answer,
+      },
+    })),
+  };
+}
+
 export function buildApplicationSchema(siteOrigin: string): object {
   return {
     "@context": "https://schema.org",
@@ -137,6 +152,7 @@ export function buildApplicationSchema(siteOrigin: string): object {
         privacyPolicy: `${siteOrigin}/privacy`,
         inLanguage: "en",
       },
+      buildFaqSchema(),
     ],
   };
 }

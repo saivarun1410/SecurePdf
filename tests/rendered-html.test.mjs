@@ -21,6 +21,24 @@ async function request(path = "/", accept = "text/html") {
   );
 }
 
+function plainWordCount(html) {
+  return html
+    .replaceAll(/<[^>]*>/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+}
+
+function faqAnswerWordCount(html) {
+  const answerMatches = html.matchAll(
+    /<details><summary>.*?<\/summary><p>(.*?)<\/p><\/details>/gs,
+  );
+  return [...answerMatches].reduce(
+    (total, match) => total + plainWordCount(match[1]),
+    0,
+  );
+}
+
 test("server-renders the SecurePDF application shell", async () => {
   const response = await request();
   assert.equal(response.status, 200);
@@ -42,9 +60,12 @@ test("server-renders the SecurePDF application shell", async () => {
   );
   assert.match(html, /<meta name="robots" content="index, follow"/i);
   assert.match(html, /"@type":"WebApplication"/i);
+  assert.match(html, /"@type":"FAQPage"/i);
   assert.match(html, /SecurePDF/);
   assert.match(html, /Arrange PDFs safely/);
   assert.match(html, /Merge PDFs without uploading/);
+  assert.ok((html.match(/<details>/g) ?? []).length > 10);
+  assert.ok(faqAnswerWordCount(html) > 600);
   assert.doesNotMatch(html, /href="\/refunds"|>Refunds</i);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
 });

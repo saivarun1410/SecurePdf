@@ -2,6 +2,7 @@ import { fileURLToPath } from "node:url";
 import { chromium } from "playwright-core";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
+const baseUrl = process.env.SECUREPDF_BASE_URL ?? "http://localhost:3000";
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const context = await browser.newContext();
 const page = await context.newPage();
@@ -38,7 +39,7 @@ async function clickSecondaryAction(name) {
 }
 
 await page.setViewportSize({ width: 1440, height: 900 });
-await page.goto("http://localhost:3000/", { waitUntil: "networkidle" });
+await page.goto(baseUrl, { waitUntil: "networkidle" });
 await page.evaluate(() => localStorage.clear());
 await page.reload({ waitUntil: "networkidle" });
 requireCheck((await page.locator(".brand-mark").count()) === 0, "Brand mark remains");
@@ -50,6 +51,21 @@ requireCheck(
   (await computed(".quick-grid div", "grid-template-columns")).split(" ").length === 2,
   "Guarantee text is not beside its number",
 );
+requireCheck(
+  (await computed(".seo-content", "background-color")) === "rgb(245, 245, 245)",
+  "SEO content does not have a solid grey background",
+);
+requireCheck(
+  (await page.locator(".seo-faq details").count()) > 10,
+  "FAQ does not contain enough questions",
+);
+const closedChevron = await computed(".faq-chevron", "transform");
+await page.locator(".seo-faq summary").first().click();
+await page.waitForTimeout(200);
+const openChevron = await computed(".faq-chevron", "transform");
+requireCheck(closedChevron !== openChevron, "FAQ chevron does not rotate");
+await page.locator(".seo-faq summary").first().click();
+await page.waitForTimeout(200);
 await page.screenshot({ path: `${projectRoot}/tmp/home-qa.png`, fullPage: true });
 
 await page.locator('input[type="file"]').setInputFiles([
