@@ -85,6 +85,10 @@
   letter-spacing: -0.025em;
 }
 
+.seo-faq h2 {
+  margin-bottom: 18px;
+}
+
 .seo-steps ol {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

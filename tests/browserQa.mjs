@@ -60,6 +60,12 @@ requireCheck(
   (await page.locator(".seo-faq details").count()) > 10,
   "FAQ does not contain enough questions",
 );
+const faqTitleBounds = await page.locator(".seo-faq h2").boundingBox();
+const firstFaqBounds = await page.locator(".seo-faq details").first().boundingBox();
+requireCheck(
+  firstFaqBounds.y - (faqTitleBounds.y + faqTitleBounds.height) >= 16,
+  "FAQ title does not have enough space below it",
+);
 const closedChevron = await computed(".faq-chevron", "transform");
 await page.locator(".seo-faq summary").first().click();
 await page.waitForTimeout(200);
