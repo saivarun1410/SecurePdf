@@ -16,8 +16,8 @@ export function getSupportOptions(): SupportOption[] {
         DOMESTIC_SUPPORT_PAGE_URL,
     },
     {
-      label: "Support internationally",
-      description: "Pay securely with an international card.",
+      label: "Support from outside India",
+      description: "Send a contribution to India using an international card.",
       href: process.env.NEXT_PUBLIC_SUPPORT_USD_URL,
     },
   ];
