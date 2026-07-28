@@ -290,7 +290,9 @@ requireCheck(
   "Domestic Razorpay page is not connected",
 );
 requireCheck(
-  await page.getByRole("button", { name: /Support internationally/ }).isDisabled(),
+  await page
+    .getByRole("button", { name: /Support from outside India/ })
+    .isDisabled(),
   "International support should remain unavailable during review",
 );
 await page.getByLabel("Close").click();
