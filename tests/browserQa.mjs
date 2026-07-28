@@ -186,6 +186,10 @@ requireCheck(
   await page.locator(".add-document-card.columns").isVisible(),
   "Column sibling add card hidden",
 );
+requireCheck(
+  (await computed(".document-workspace.columns", "scrollbar-width")) === "thin",
+  "Columns workspace scrollbar is not thin",
+);
 await page.screenshot({ path: `${projectRoot}/tmp/mobile-qa.png`, fullPage: true });
 
 await page.setViewportSize({ width: 1440, height: 900 });
