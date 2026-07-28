@@ -3,7 +3,7 @@ export interface ExportName {
   readonly filenameStem: string;
 }
 
-export const DEFAULT_EXPORT_TITLE = "securepdf-merged";
+export const DEFAULT_EXPORT_TITLE = "realsecurepdf-merged";
 
 const MAX_TITLE_LENGTH = 80;
 const TRAILING_EXPORT_EXTENSION = /(?:(?:\.pdf|\.zip))+$/i;

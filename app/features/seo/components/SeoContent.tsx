@@ -1,9 +1,9 @@
-import { SECUREPDF_FAQ_ENTRIES } from "../services/faqContent";
+import { REAL_SECURE_PDF_FAQ_ENTRIES } from "../services/faqContent";
 
 const PRODUCT_FEATURES = [
   {
     heading: "Merge PDFs without uploading",
-    body: "PDF bytes, filenames, thumbnails, and the merged file remain in this browser tab. SecurePDF has no document-upload endpoint or document storage.",
+    body: "PDF bytes, filenames, thumbnails, and the merged file remain in this browser tab. RealSecurePdf has no document-upload endpoint or document storage.",
   },
   {
     heading: "Reorder every PDF page",
@@ -11,7 +11,7 @@ const PRODUCT_FEATURES = [
   },
   {
     heading: "Verify before downloading",
-    body: "SecurePDF reopens the generated file and checks its structure, page count, dimensions, and renderability before enabling the download.",
+    body: "RealSecurePdf reopens the generated file and checks its structure, page count, dimensions, and renderability before enabling the download.",
   },
 ] as const;
 
@@ -25,7 +25,7 @@ export function SeoContent(): React.JSX.Element {
             Merge and reorder PDF pages without sending files to a server
           </h2>
           <p>
-            SecurePDF is a private online PDF organizer for combining documents,
+            RealSecurePdf is a private online PDF organizer for combining documents,
             moving pages, and checking the finished file before download.
           </p>
         </div>
@@ -50,7 +50,7 @@ export function SeoContent(): React.JSX.Element {
 
         <div className="seo-faq">
           <h2>Frequently asked questions</h2>
-          {SECUREPDF_FAQ_ENTRIES.map((item) => (
+          {REAL_SECURE_PDF_FAQ_ENTRIES.map((item) => (
             <details key={item.question}>
               <summary>
                 <span>{item.question}</span>

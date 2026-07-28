@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 
 export type ColorTheme = "light" | "dark";
 
-const THEME_KEY = "securepdf:theme";
+const THEME_KEY = "realsecurepdf:theme";
 
 function preferredTheme(): ColorTheme {
   const stored = localStorage.getItem(THEME_KEY);

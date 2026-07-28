@@ -9,7 +9,7 @@ async function createTextPdf(fileName, pageCount, landscape = false) {
   for (let index = 0; index < pageCount; index += 1) {
     const size = landscape ? [792, 612] : [612, 792];
     const page = document.addPage(size);
-    page.drawText(`SecurePDF clarity fixture - page ${index + 1}`, {
+    page.drawText(`RealSecurePdf clarity fixture - page ${index + 1}`, {
       x: 48,
       y: size[1] - 72,
       size: 18,

@@ -89,7 +89,8 @@ export function WorkspaceToolbar(props: WorkspaceToolbarProps): React.JSX.Elemen
   return (
     <header className="toolbar">
       <div className="brand">
-        <strong>SecurePDF</strong>
+        <strong>RealSecurePdf</strong>
+        <span className="brand-badge">Free</span>
       </div>
       <div className="toolbar-center">
         {hasDocuments && (

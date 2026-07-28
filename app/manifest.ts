@@ -2,8 +2,8 @@ import { SITE_DESCRIPTION } from "./features/seo/services/siteMetadata";
 
 export default function manifest() {
   return {
-    name: "SecurePDF — Private PDF Merger",
-    short_name: "SecurePDF",
+    name: "RealSecurePdf — Private PDF Merger",
+    short_name: "RealSecurePdf",
     description: SITE_DESCRIPTION,
     start_url: "/",
     display: "standalone",

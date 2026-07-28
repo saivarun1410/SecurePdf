@@ -5,7 +5,7 @@ import { PDFDocument } from "pdf-lib";
 import { chromium } from "playwright-core";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
-const baseUrl = process.env.SECUREPDF_BASE_URL ?? "http://localhost:3000";
+const baseUrl = process.env.REAL_SECURE_PDF_BASE_URL ?? "http://localhost:3000";
 const browser = await chromium.launch({ channel: "chrome", headless: true });
 const context = await browser.newContext();
 const page = await context.newPage();
@@ -201,7 +201,7 @@ const brandIsUncovered = await page.locator(".brand").evaluate((element) => {
   );
   return topElement === element || element.contains(topElement);
 });
-requireCheck(brandIsUncovered, "Mobile actions overlap the SecurePDF brand");
+requireCheck(brandIsUncovered, "Mobile actions overlap the RealSecurePdf brand");
 requireCheck(await page.locator(".add-document-card").isVisible(), "Mobile add card hidden");
 requireCheck(
   (await page.evaluate(() => document.documentElement.scrollWidth)) <= 390,
@@ -258,7 +258,7 @@ requireCheck(
 );
 const contactName = page.getByLabel("Name", { exact: true });
 const restingContactBackground = await computed("#contact-name", "background-color");
-await contactName.fill("SecurePDF QA");
+await contactName.fill("RealSecurePdf QA");
 await contactName.focus();
 requireCheck(
   (await computed("#contact-name", "background-color")) === restingContactBackground,
@@ -270,7 +270,10 @@ await page
   .fill("This is an automated browser check for the contact form.");
 await page.getByRole("button", { name: "Send message" }).click();
 await page.getByText("Message sent.", { exact: false }).waitFor();
-requireCheck(contactPayload?.source === "securepdf-contact", "Contact request was not sent");
+requireCheck(
+  contactPayload?.source === "realsecurepdf-contact",
+  "Contact request was not sent",
+);
 requireCheck(
   !JSON.stringify(contactPayload).includes(".pdf"),
   "Contact request included PDF metadata",

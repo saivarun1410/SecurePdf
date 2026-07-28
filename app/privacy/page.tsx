@@ -3,7 +3,7 @@ import { LegalPage } from "../features/legal/components/LegalPage";
 export const metadata = {
   title: "Privacy Policy",
   description:
-    "How SecurePDF processes PDF files locally in browser memory and protects document contents, filenames, and workspace activity.",
+    "How RealSecurePdf processes PDF files locally in browser memory and protects document contents, filenames, and workspace activity.",
   alternates: { canonical: "/privacy" },
 };
 
@@ -11,14 +11,14 @@ export default function PrivacyPage(): React.JSX.Element {
   return (
     <LegalPage
       title="Privacy policy"
-      summary="SecurePDF is designed so the documents you arrange stay on your device."
+      summary="RealSecurePdf is designed so the documents you arrange stay on your device."
       sections={[
         {
           heading: "PDF processing",
           content: (
             <p>
               PDF bytes, filenames, thumbnails, and merged output are processed
-              in your browser memory. SecurePDF does not upload or store them.
+              in your browser memory. RealSecurePdf does not upload or store them.
             </p>
           ),
         },
@@ -38,7 +38,7 @@ export default function PrivacyPage(): React.JSX.Element {
             <p>
               If you choose to support the project, an external payment
               provider processes the transaction under its own privacy policy.
-              SecurePDF never places payment code inside the PDF workspace.
+              RealSecurePdf never places payment code inside the PDF workspace.
             </p>
           ),
         },

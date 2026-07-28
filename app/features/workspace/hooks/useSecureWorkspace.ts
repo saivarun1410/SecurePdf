@@ -42,9 +42,18 @@ export interface WorkspaceNotice {
   readonly message: string;
 }
 
-const LAYOUT_KEY = "securepdf:layout";
-const ZOOM_KEY = "securepdf:page-zoom";
+const LAYOUT_KEY = "realsecurepdf:layout";
+const ZOOM_KEY = "realsecurepdf:page-zoom";
 const HISTORY_LIMIT = 30;
+const IMPORT_RETRY_GUIDANCE = "Please try again.";
+
+function createImportErrorMessage(error: unknown): string {
+  const reason =
+    error instanceof PdfSecurityError
+      ? error.message
+      : "This PDF could not be safely opened and was rejected.";
+  return `${reason} ${IMPORT_RETRY_GUIDANCE}`;
+}
 
 function workspaceByteCount(documents: PdfDocumentItem[]): number {
   const sources = new Map<string, number>();
@@ -156,11 +165,7 @@ export function useSecureWorkspace() {
           URL.revokeObjectURL(url);
           thumbnailUrls.current.delete(url);
         });
-        const message =
-          error instanceof PdfSecurityError
-            ? error.message
-            : "This PDF could not be safely opened and was rejected.";
-        setNotice({ tone: "error", message });
+        setNotice({ tone: "error", message: createImportErrorMessage(error) });
       } finally {
         setBusy(false);
       }

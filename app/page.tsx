@@ -1,4 +1,4 @@
-import { SecurePdfApp } from "./features/workspace/components/SecurePdfApp";
+import { RealSecurePdfApp } from "./features/workspace/components/RealSecurePdfApp";
 
 export const metadata = {
   title: "Free Private PDF Merger & Page Organizer",
@@ -8,5 +8,5 @@ export const metadata = {
 };
 
 export default function Home() {
-  return <SecurePdfApp />;
+  return <RealSecurePdfApp />;
 }
