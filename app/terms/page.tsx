@@ -14,7 +14,9 @@ export default function TermsPage(): React.JSX.Element {
             <p>
               Signed files, interactive forms, active content, encrypted or
               malformed files, and files beyond the published workspace limits
-              may be rejected. These limits protect document integrity.
+              may be rejected. Live forms are rejected because page copying can
+              detach field values or behavior. These limits protect document
+              integrity.
             </p>
           ),
         },

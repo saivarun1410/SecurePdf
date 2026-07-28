@@ -1,4 +1,5 @@
 import type { ImportLimits } from "../types/documentTypes";
+import type { PDFDocument } from "pdf-lib";
 
 const PDF_EXTENSION = /\.pdf$/i;
 const SIGNATURE_PATTERNS = [/\/Type\s*\/Sig\b/i, /\/ByteRange\s*\[/i];
@@ -7,7 +8,6 @@ const ACTIVE_CONTENT_PATTERNS = [
   /\/Launch\b/i,
   /\/EmbeddedFiles\b/i,
 ];
-const INTERACTIVE_FORM_PATTERNS = [/\/AcroForm\b/i, /\/XFA\b/i];
 
 export const IMPORT_LIMITS: ImportLimits = {
   maximumFileBytes: 100 * 1024 * 1024,
@@ -78,13 +78,24 @@ export function validatePassivePdf(bytes: Uint8Array): void {
       "This PDF contains active or embedded content and was rejected for safety.",
     );
   }
-  const interactiveForm = INTERACTIVE_FORM_PATTERNS.find((pattern) =>
-    pattern.test(searchable),
+}
+
+export function validateDocumentFormSafety(document: PDFDocument): void {
+  const form = document.getForm();
+  const fields = form.getFields();
+  const hasSignature = fields.some(
+    (field) => field.constructor.name === "PDFSignature",
   );
-  if (interactiveForm) {
+  if (hasSignature) {
+    throw new PdfSecurityError(
+      "SIGNED_PDF",
+      "This PDF contains a digital signature. Merging would invalidate it, so the file was left untouched.",
+    );
+  }
+  if (form.hasXFA() || fields.length > 0) {
     throw new PdfSecurityError(
       "INTERACTIVE_FORM",
-      "Interactive PDF forms are not accepted because merging can change their behavior.",
+      "This PDF has live form fields. Merging can detach their values or behavior. Print or export a static copy, then add that copy.",
     );
   }
 }

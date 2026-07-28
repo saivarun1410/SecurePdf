@@ -86,3 +86,22 @@ export function movePage(
   next[target.documentIndex].pages.splice(adjustedTarget, 0, page);
   return next.filter((document) => document.pages.length > 0);
 }
+
+export function movePageToDocumentEnd(
+  documents: PdfDocumentItem[],
+  activePageId: string,
+  targetDocumentId: string,
+): PdfDocumentItem[] {
+  const source = findPage(documents, activePageId);
+  const targetIndex = documents.findIndex(
+    (document) => document.id === targetDocumentId,
+  );
+  if (!source || targetIndex < 0) return documents;
+  const next = documents.map((document) => ({
+    ...document,
+    pages: [...document.pages],
+  }));
+  const [page] = next[source.documentIndex].pages.splice(source.pageIndex, 1);
+  next[targetIndex].pages.push(page);
+  return next.filter((document) => document.pages.length > 0);
+}

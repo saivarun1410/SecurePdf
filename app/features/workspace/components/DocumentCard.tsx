@@ -1,9 +1,11 @@
+import { useDraggable, useDroppable } from "@dnd-kit/core";
 import type {
   PdfDocumentItem,
   WorkspaceLayout,
 } from "../../documents/types/documentTypes";
+import type { DraggableItem } from "../types/dragTypes";
+import { DocumentEndDropZone } from "./DocumentEndDropZone";
 import { PageCard } from "./PageCard";
-import type { DragItem } from "../types/dragTypes";
 
 interface DocumentCardProps {
   readonly document: PdfDocumentItem;
@@ -11,27 +13,39 @@ interface DocumentCardProps {
   readonly onRename: (documentId: string, name: string) => void;
   readonly onRemoveDocument: (documentId: string) => void;
   readonly onRemovePage: (pageId: string) => void;
-  readonly onDragStart: (item: DragItem) => void;
-  readonly onDrop: (item: DragItem) => void;
 }
 
 export function DocumentCard(props: DocumentCardProps): React.JSX.Element {
-  const dragItem: DragItem = {
+  const dragItem: DraggableItem = {
     kind: "document",
     documentId: props.document.id,
   };
+  const draggable = useDraggable({
+    id: `document:${props.document.id}`,
+    data: { item: dragItem },
+  });
+  const droppable = useDroppable({
+    id: `document-target:${props.document.id}`,
+    data: { target: dragItem },
+  });
+
   return (
     <section
-      className={`document-card ${props.layout}`}
-      onDragOver={(event) => event.preventDefault()}
-      onDrop={() => props.onDrop(dragItem)}
+      ref={droppable.setNodeRef}
+      className={[
+        "document-card",
+        props.layout,
+        draggable.isDragging ? "dragging" : "",
+        droppable.isOver ? "document-drop-target" : "",
+      ].join(" ")}
     >
       <header className="document-header">
         <button
+          ref={draggable.setNodeRef}
           className="drag-handle"
           aria-label={`Move ${props.document.name}`}
-          draggable
-          onDragStart={() => props.onDragStart(dragItem)}
+          {...draggable.attributes}
+          {...draggable.listeners}
         >
           ⠿
         </button>
@@ -65,10 +79,9 @@ export function DocumentCard(props: DocumentCardProps): React.JSX.Element {
             documentId={props.document.id}
             pageNumber={index + 1}
             onRemove={props.onRemovePage}
-            onDragStart={props.onDragStart}
-            onDrop={props.onDrop}
           />
         ))}
+        <DocumentEndDropZone documentId={props.document.id} />
       </div>
     </section>
   );

@@ -6,6 +6,7 @@ import type {
 } from "../app/features/documents/types/documentTypes";
 import {
   movePage,
+  movePageToDocumentEnd,
   removePage,
   reorderDocuments,
 } from "../app/features/workspace/services/workspaceOperations";
@@ -60,6 +61,17 @@ describe("workspace ordering", () => {
       "document-two",
       "document-one",
     ]);
+  });
+
+  it("moves a page to the end of another document", () => {
+    const moved = movePageToDocumentEnd(
+      documents(),
+      "one-a",
+      "document-two",
+    );
+    expect(moved[0].pages.map(({ id }) => id)).toEqual(["one-b"]);
+    expect(moved[1].pages.map(({ id }) => id)).toEqual(["two-a", "one-a"]);
+    expect(moved[1].pages[1].source.id).toBe("first");
   });
 
   it("removes empty documents after the final page is removed", () => {

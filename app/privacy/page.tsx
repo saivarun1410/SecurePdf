@@ -37,6 +37,16 @@ export default function PrivacyPage(): React.JSX.Element {
             </p>
           ),
         },
+        {
+          heading: "Contact messages",
+          content: (
+            <p>
+              The contact form sends only the name, email address, and message
+              you deliberately enter to Web3Forms. PDF contents, filenames,
+              page counts, and workspace activity are never included.
+            </p>
+          ),
+        },
       ]}
     />
   );
