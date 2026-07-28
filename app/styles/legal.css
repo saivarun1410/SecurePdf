@@ -1,0 +1,114 @@
+.legal-links,
+.dialog-legal {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.legal-links {
+  margin-top: 18px;
+}
+
+.legal-links a,
+.dialog-legal a {
+  color: var(--color-mute);
+  font-size: 10px;
+  text-decoration: none;
+}
+
+.legal-links a:hover,
+.dialog-legal a:hover {
+  color: var(--color-ink);
+}
+
+.dialog-legal {
+  justify-content: center;
+  margin-top: 14px;
+}
+
+.legal-page {
+  min-height: 100vh;
+  background:
+    linear-gradient(var(--color-hairline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-hairline) 1px, transparent 1px),
+    var(--color-canvas-soft);
+  background-size: 32px 32px;
+}
+
+.legal-page > header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  border-bottom: 1px solid var(--color-hairline);
+  background: color-mix(in srgb, var(--color-canvas) 94%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.legal-brand,
+.legal-back {
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.legal-brand {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.legal-back {
+  color: var(--color-body);
+  font-size: 11px;
+}
+
+.legal-page article {
+  width: min(680px, calc(100% - 32px));
+  margin: 40px auto;
+  padding: 34px;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  background: var(--color-canvas);
+}
+
+.legal-kicker,
+.legal-updated {
+  color: var(--color-mute);
+  font-family: var(--font-mono);
+  font-size: 10px;
+}
+
+.legal-page h1 {
+  margin: 10px 0;
+  font-size: clamp(28px, 5vw, 42px);
+  letter-spacing: -1.5px;
+}
+
+.legal-summary {
+  color: var(--color-body);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.legal-updated {
+  margin: 18px 0 34px;
+}
+
+.legal-page article section {
+  padding: 24px 0;
+  border-top: 1px solid var(--color-hairline);
+}
+
+.legal-page h2 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.legal-page article section p {
+  margin: 0;
+  color: var(--color-body);
+  font-size: 13px;
+  line-height: 1.75;
+}
