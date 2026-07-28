@@ -1,4 +1,7 @@
+import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import { unzipSync } from "fflate";
+import { PDFDocument } from "pdf-lib";
 import { chromium } from "playwright-core";
 
 const projectRoot = fileURLToPath(new URL("../", import.meta.url));
@@ -120,6 +123,33 @@ requireCheck(
   "Custom PDF title was not used for the verified download",
 );
 
+await page.getByRole("button", { name: "Verify and download" }).click();
+await page.getByRole("radio", { name: /Separate PDFs/ }).check();
+await page.getByLabel("ZIP title").fill("Separate / Rows.zip");
+await page.screenshot({ path: `${projectRoot}/tmp/export-dialog-qa.png` });
+const archiveDownloadPromise = page.waitForEvent("download");
+await page
+  .locator(".export-name-dialog")
+  .getByRole("button", { name: "Verify & download" })
+  .click();
+const archiveDownload = await archiveDownloadPromise;
+requireCheck(
+  archiveDownload.suggestedFilename() === "Separate Rows.zip",
+  "Separate row archive did not use the requested name",
+);
+const archivePath = await archiveDownload.path();
+const archiveEntries = unzipSync(await readFile(archivePath));
+const separatePageCounts = await Promise.all(
+  Object.values(archiveEntries).map(async (bytes) => {
+    const document = await PDFDocument.load(bytes);
+    return document.getPageCount();
+  }),
+);
+requireCheck(
+  separatePageCounts.join(",") === "3,2",
+  "Separate row PDFs did not preserve document boundaries",
+);
+
 const center = await page.locator(".toolbar-center").boundingBox();
 requireCheck(
   Math.abs(center.x + center.width / 2 - 720) < 4,
@@ -190,6 +220,17 @@ requireCheck(
   (await computed(".document-workspace.columns", "scrollbar-width")) === "thin",
   "Columns workspace scrollbar is not thin",
 );
+await page.getByRole("button", { name: "Verify and download" }).click();
+const mobileExportDialog = await page.locator(".export-name-dialog").boundingBox();
+requireCheck(
+  mobileExportDialog.y >= 0 &&
+    mobileExportDialog.y + mobileExportDialog.height <= 844,
+  "Export choice dialog does not fit the mobile viewport",
+);
+await page.screenshot({
+  path: `${projectRoot}/tmp/export-dialog-mobile-qa.png`,
+});
+await page.locator(".export-name-dialog").getByLabel("Close").click();
 await page.screenshot({ path: `${projectRoot}/tmp/mobile-qa.png`, fullPage: true });
 
 await page.setViewportSize({ width: 1440, height: 900 });
@@ -253,7 +294,17 @@ await page.getByLabel("Close").click();
 await page.screenshot({ path: `${projectRoot}/tmp/desktop-qa.png`, fullPage: true });
 
 console.log(
-  JSON.stringify({ previewQuality, maximumZoomQuality, pageCounts, errors }, null, 2),
+  JSON.stringify(
+    {
+      previewQuality,
+      maximumZoomQuality,
+      pageCounts,
+      separatePageCounts,
+      errors,
+    },
+    null,
+    2,
+  ),
 );
 requireCheck(errors.length === 0, `Browser errors: ${errors.join(" | ")}`);
 await browser.close();

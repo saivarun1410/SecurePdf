@@ -18,4 +18,10 @@ describe("export filename resolution", () => {
       filenameStem: DEFAULT_EXPORT_TITLE,
     });
   });
+
+  it("removes a supplied ZIP extension", () => {
+    expect(resolveExportName("Separate rows.zip").filenameStem).toBe(
+      "Separate rows",
+    );
+  });
 });

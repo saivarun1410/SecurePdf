@@ -14,6 +14,11 @@ import {
 } from "../../export/services/pdfExportService";
 import { resolveExportName } from "../../export/services/exportFilenameService";
 import {
+  createVerifiedPdfArchive,
+  downloadVerifiedPdfArchive,
+} from "../../export/services/pdfArchiveService";
+import type { ExportRequest } from "../../export/types/exportTypes";
+import {
   recordProductEvent,
   captureCampaignSource,
 } from "../../analytics/services/localAnalytics";
@@ -47,6 +52,32 @@ function workspaceByteCount(documents: PdfDocumentItem[]): number {
     .flatMap((document) => document.pages)
     .forEach((page) => sources.set(page.source.id, page.source.bytes.byteLength));
   return Array.from(sources.values()).reduce((sum, bytes) => sum + bytes, 0);
+}
+
+async function createWorkspaceDownload(
+  documents: PdfDocumentItem[],
+  request: ExportRequest,
+  report: (message: string) => void,
+): Promise<WorkspaceNotice> {
+  const exportName = resolveExportName(request.title);
+  if (request.mode === "separate") {
+    const archive = await createVerifiedPdfArchive(documents, report);
+    downloadVerifiedPdfArchive(archive, exportName.filenameStem);
+    return {
+      tone: "success",
+      message: `Verified ${archive.pageCount} pages across ${archive.documentCount} separate PDFs`,
+    };
+  }
+  const exported = await createVerifiedPdf(
+    documents,
+    report,
+    exportName.documentTitle,
+  );
+  downloadVerifiedPdf(exported, exportName.filenameStem);
+  return {
+    tone: "success",
+    message: `Verified ${exported.pageCount} pages · fingerprint ${exported.fingerprint}`,
+  };
 }
 
 export function useSecureWorkspace() {
@@ -178,22 +209,17 @@ export function useSecureWorkspace() {
     [commit],
   );
 
-  const exportPdf = useCallback(async (requestedTitle: string) => {
+  const exportPdf = useCallback(async (request: ExportRequest) => {
     if (busy || documentsRef.current.length === 0) return;
-    const exportName = resolveExportName(requestedTitle);
     setBusy(true);
     try {
-      const exported = await createVerifiedPdf(
+      const successNotice = await createWorkspaceDownload(
         documentsRef.current,
+        request,
         (message) => setNotice({ tone: "info", message }),
-        exportName.documentTitle,
       );
-      downloadVerifiedPdf(exported, exportName.filenameStem);
       recordProductEvent("merge_completed");
-      setNotice({
-        tone: "success",
-        message: `Verified ${exported.pageCount} pages · fingerprint ${exported.fingerprint}`,
-      });
+      setNotice(successNotice);
     } catch {
       recordProductEvent("merge_failed");
       setNotice({
