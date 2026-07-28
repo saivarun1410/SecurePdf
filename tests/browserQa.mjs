@@ -7,6 +7,7 @@ const browser = await chromium.launch({ channel: "chrome", headless: true });
 const context = await browser.newContext();
 const page = await context.newPage();
 const errors = [];
+let contactPayload = null;
 page.on("pageerror", (error) => errors.push(String(error)));
 page.on("console", (message) => {
   if (message.type() === "error") errors.push(message.text());
@@ -174,10 +175,41 @@ await page.locator('input[type="file"]').setInputFiles(
 );
 await page.getByText("This PDF has live form fields", { exact: false }).waitFor();
 requireCheck((await page.locator(".document-card").count()) === 3, "Rejected form changed state");
+await page.route("https://api.web3forms.com/submit", async (route) => {
+  contactPayload = JSON.parse(route.request().postData() ?? "{}");
+  await route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ success: true }),
+  });
+});
 await clickSecondaryAction("Contact");
 requireCheck(
   (await page.locator(".contact-dialog").innerText()).includes("never includes PDFs"),
   "Contact privacy copy missing",
+);
+requireCheck(
+  (await computed(".dialog-backdrop", "backdrop-filter")).includes("blur"),
+  "Contact backdrop is not blurred",
+);
+const contactName = page.getByLabel("Name", { exact: true });
+const restingContactBackground = await computed("#contact-name", "background-color");
+await contactName.fill("SecurePDF QA");
+await contactName.focus();
+requireCheck(
+  (await computed("#contact-name", "background-color")) === restingContactBackground,
+  "Focused contact field changed background color",
+);
+await page.getByLabel("Email", { exact: true }).fill("qa@example.com");
+await page
+  .getByLabel("Message", { exact: true })
+  .fill("This is an automated browser check for the contact form.");
+await page.getByRole("button", { name: "Send message" }).click();
+await page.getByText("Message sent.", { exact: false }).waitFor();
+requireCheck(contactPayload?.source === "securepdf-contact", "Contact request was not sent");
+requireCheck(
+  !JSON.stringify(contactPayload).includes(".pdf"),
+  "Contact request included PDF metadata",
 );
 await page.getByLabel("Close").click();
 await clickSecondaryAction("Support");

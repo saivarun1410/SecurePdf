@@ -21,12 +21,14 @@
 
 .contact-dialog input,
 .contact-dialog textarea {
+  appearance: none;
   width: 100%;
   padding: 9px 10px;
   border: 1px solid var(--color-hairline);
   border-radius: var(--radius-sm);
   outline: none;
   background: var(--color-canvas-soft);
+  caret-color: var(--color-ink);
   color: var(--color-ink);
   font: inherit;
 }
@@ -35,6 +37,17 @@
 .contact-dialog textarea:focus {
   border-color: var(--color-hairline-strong);
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-ink) 10%, transparent);
+}
+
+.contact-dialog input:-webkit-autofill,
+.contact-dialog input:-webkit-autofill:hover,
+.contact-dialog input:-webkit-autofill:focus,
+.contact-dialog textarea:-webkit-autofill,
+.contact-dialog textarea:-webkit-autofill:hover,
+.contact-dialog textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-canvas-soft) inset;
+  -webkit-text-fill-color: var(--color-ink);
+  caret-color: var(--color-ink);
 }
 
 .contact-dialog textarea {

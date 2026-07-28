@@ -10,6 +10,11 @@ export function ContactDialog({
   onClose,
 }: ContactDialogProps): React.JSX.Element | null {
   const form = useContactForm();
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void form.submit();
+  };
+
   if (!open) return null;
   return (
     <div className="dialog-backdrop" role="presentation" onMouseDown={onClose}>
@@ -34,46 +39,54 @@ export function ContactDialog({
             Message sent. Thank you for helping improve SecurePDF.
           </div>
         ) : (
-          <form
-            onSubmit={(event) => {
-              event.preventDefault();
-              void form.submit();
-            }}
-          >
-            <label>
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="contact-name">
               Name
               <input
+                id="contact-name"
+                name="name"
                 value={form.fields.name}
                 onChange={(event) => form.update("name", event.target.value)}
                 autoComplete="name"
+                aria-describedby={form.error ? "contact-error" : undefined}
                 required
               />
             </label>
-            <label>
+            <label htmlFor="contact-email">
               Email
               <input
+                id="contact-email"
+                name="email"
                 type="email"
                 value={form.fields.email}
                 onChange={(event) => form.update("email", event.target.value)}
                 autoComplete="email"
+                aria-describedby={form.error ? "contact-error" : undefined}
                 required
               />
             </label>
-            <label>
+            <label htmlFor="contact-message">
               Message
               <textarea
+                id="contact-message"
+                name="message"
                 value={form.fields.message}
                 onChange={(event) => form.update("message", event.target.value)}
                 minLength={10}
                 rows={5}
+                aria-describedby={form.error ? "contact-error" : undefined}
                 required
               />
             </label>
-            {form.error && <p className="contact-error">{form.error}</p>}
+            {form.error && (
+              <p id="contact-error" className="contact-error" role="alert">
+                {form.error}
+              </p>
+            )}
             <button
               className="contact-submit"
               type="submit"
-              disabled={!form.configured || form.state === "sending"}
+              disabled={form.state === "sending"}
             >
               {form.state === "sending" ? "Sending…" : "Send message"}
             </button>
