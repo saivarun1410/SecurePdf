@@ -285,9 +285,8 @@ requireCheck(
   "Removed support copy remains",
 );
 requireCheck(
-  (await page.getByRole("link", { name: /Support from India/ }).getAttribute("href")) ===
-    "https://rzp.io/rzp/Mja4hAh",
-  "Domestic Razorpay page is not connected",
+  await page.getByRole("button", { name: /Support from India/ }).isDisabled(),
+  "Domestic support should remain unavailable during review",
 );
 requireCheck(
   await page
